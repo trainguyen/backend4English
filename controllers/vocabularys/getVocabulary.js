@@ -4,7 +4,7 @@ require('dotenv').config();
 
 module.exports=async(req,res)=>{
     try{
-        let vocabulary=await Vocabulary.find().sort({_id:-1}).limit(50).catch((e)=>{
+        let vocabulary=await Vocabulary.find().sort({_id:-1}).limit(10).catch((e)=>{
             return res.status(500).errorJson(errorJson(e,'An interval server error occurred while getting foods from db.'))
         });
 

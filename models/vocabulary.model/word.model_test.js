@@ -48,7 +48,7 @@ const wordSchema=mongoose.Schema({
           enum:Array.from({length:NUM_OF_SPECIALTY},(_,key)=>key.toString()),
           default:'0'
       },
-      topics:[
+      topic:[
           {
               type:String,
               enum:Array.from({length:NUM_OF_TOPIC},(_,key)=>key.toString())
@@ -61,7 +61,7 @@ const wordSchema=mongoose.Schema({
           trim:true,
           maxLength:150
       },
-      isChecked:{
+      ischecked:{
           type:Boolean,
           default:false
       },

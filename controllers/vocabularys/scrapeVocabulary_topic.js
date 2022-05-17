@@ -24,7 +24,7 @@ const getListLinks=async ()=>{
       console.log(getallLinks);
       listLinks.push(getallLinks);
     } 
-    // console.log(listLinks);
+    console.log(listLinks);
     // return listLinks;
 }
 
@@ -32,8 +32,8 @@ const getListLinks=async ()=>{
 
 
 const getList_category=async ()=>{
-
-  url='https://www.oxfordlearnersdictionaries.com/topic/category/animals_1'; 
+  var type='work-and-business'
+  url='https://www.oxfordlearnersdictionaries.com/topic/category/'+type; 
 
   var list_Sub_category=[];
 
@@ -53,7 +53,7 @@ const getList_category=async ()=>{
       // console.log($('.topic-box-secondary').eq(0).find('div').find('a').eq(j).text()); 
       // console.log($('.topic-box-secondary').eq(0).find('div').find('a').eq(j).attr('href')); 
       list_Sub_category.push([topic,$('.topic-box-secondary').eq(0).find('div').find('a').eq(j).text(),
-                          $('.topic-box-secondary').eq(0).find('div').find('a').eq(j).attr('href')]) 
+                          $('.topic-box-secondary').eq(0).find('div').find('a').eq(j).attr('href'),type]) 
     } 
   } 
   // console.log(list_Sub_category);
@@ -71,9 +71,9 @@ const scrapeTopic=async (listLinks)=>{
 
     // console.log(listUrl.length)
 
-    for(let index=0 ; index < listUrl.length ;index++){
-
-        let html=await axios.get(listUrl[index][2]);
+    for(let index=0 ; index < 1 ;index++){
+      var numList=0;
+        let html=await axios.get(listUrl[numList][2]);
         let $=await cheerio.load(html.data); 
 
         let getCountWords=$('.top-g');
@@ -90,7 +90,7 @@ const scrapeTopic=async (listLinks)=>{
             getCountWords.find('li').eq(i).find('div').find('div').eq(0).attr('data-src-mp3')+"|"+getCountWords.find('li').eq(0).find('div').text().trim()
             +"|"+$('.top-g > li').eq(i).find('span').eq(0).text()+
             "|"+"https://www.oxfordlearnersdictionaries.com"+getCountWords.find('li').eq(i).find('div').find('div').eq(1).attr('data-src-mp3')
-            +"|"+listUrl[index][0]+"|"+listUrl[index][1]
+            +"|"+listUrl[numList][0]+"|"+listUrl[numList][1]+"|"+listUrl[numList][3]
             ); 
         } 
     }
@@ -107,7 +107,7 @@ const scrapePages=async (listLinks)=>{
   // console.log(listUrl)
   // var url='https://www.oxfordlearnersdictionaries.com/definition/english/abandon_1'
 
-  for(let index=0 ; index < 10 ;index++){
+  for(let index=0 ; index < 50 ;index++){
 
       let html=await axios.get(listUrl[index].split('|')[1]);
       let $=await cheerio.load(html.data); 
@@ -120,7 +120,7 @@ const scrapePages=async (listLinks)=>{
          } 
       // console.log(word)
 
-      let category=listUrl[index].split('|')[6];
+      let category=listUrl[index].split('|')[8];
       // console.log(level)
 
       let topic=listUrl[index].split('|')[7];
@@ -177,9 +177,7 @@ const scrapePages=async (listLinks)=>{
         var randomItem = Math.floor(Math.random()*data.length);  
         data.splice( randomItem, 0, word );
         options=data;
-        answer_index=randomItem;
-        // console.log(data)
-        // console.log(randomItem);
+        answer_index=randomItem; 
       } 
       );
       
@@ -219,25 +217,22 @@ const scrapePages=async (listLinks)=>{
   return loop_datas['datas']; 
 }
 
-scrapePages()
-
-
-
-
-// const getListwords=
-// module.exports = async (req,res)=>{
-//     var listwords,listLinks;
-//     // listLinks=await getListLinks();
-
-//     listwords=await scrapePages(""); 
-
-//     console.log(listwords);
+// scrapePages()
  
-//     if(listwords.length>0){
-//         const result=await Vocabulary.collection.insertMany(listwords,{ordered:true});
+// const getListwords=
+module.exports = async (req,res)=>{
+    var listwords,listLinks;
+    // listLinks=await getListLinks();
 
-//         return res.status(200).send( {'msg': result.insertedCount + " documents were inserted."} )
-//     } 
-// }
+    listwords=await scrapePages(""); 
+
+    console.log(listwords);
+ 
+    if(listwords.length>0){
+        const result=await Vocabulary.collection.insertMany(listwords,{ordered:true});
+
+        return res.status(200).send( {'msg': result.insertedCount + " documents were inserted."} )
+    } 
+}
 
 // getListwords();
